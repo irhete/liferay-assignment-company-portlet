@@ -7,6 +7,7 @@ import javax.portlet.ActionResponse;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import com.nortal.assignment.companymanagement.portlet.controller.CompanyManagementController;
+import com.nortal.assignment.companymanagement.portlet.model.Address;
 import com.nortal.assignment.companymanagement.portlet.model.Companies;
 import com.nortal.assignment.companymanagement.portlet.model.Company;
 import com.nortal.assignment.companymanagement.portlet.restconnector.RestConnectorService;
@@ -44,8 +46,21 @@ public class CompanyManagementControllerTests {
 	@Mock
 	private Companies companies;
 
+	private Company company;
+
+	private Address address;
+
 	@InjectMocks
 	private CompanyManagementController controller;
+
+	@Before
+	public void setUp() {
+		company = new Company(1, "test company name",
+				"test company description", 1996);
+		address = new Address("street", 123, "city", "country");
+		address.setId(1);
+		company.addAddress(address);
+	}
 
 	@Test
 	public void defaultViewTest() {
@@ -94,8 +109,6 @@ public class CompanyManagementControllerTests {
 
 	@Test
 	public void addCompanySuccessfulTest() {
-		Company company = new Company("test company name",
-				"test company description", 1996);
 		controller.addCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
 		Mockito.verify(model).addAttribute("success",
@@ -104,8 +117,6 @@ public class CompanyManagementControllerTests {
 
 	@Test
 	public void addCompanyServerError() {
-		Company company = new Company("test company name",
-				"test company description", 1996);
 		Mockito.when(restService.addCompany(company)).thenThrow(
 				new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 		controller.addCompanyMethod(actionRequest, actionResponse, model,
@@ -116,8 +127,6 @@ public class CompanyManagementControllerTests {
 
 	@Test
 	public void addCompanyClientError() {
-		Company company = new Company("test company name",
-				"test company description", 1996);
 		Mockito.when(restService.addCompany(company)).thenThrow(
 				new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 		controller.addCompanyMethod(actionRequest, actionResponse, model,
@@ -127,9 +136,6 @@ public class CompanyManagementControllerTests {
 
 	@Test
 	public void editCompanySuccessfulTest() {
-		Company company = new Company("test company name",
-				"test company description", 1996);
-		company.setId(1);
 		controller.editCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
 		Mockito.verify(model).addAttribute("success",
@@ -138,8 +144,6 @@ public class CompanyManagementControllerTests {
 
 	@Test
 	public void editCompanyServerError() {
-		Company company = new Company(1, "test company name",
-				"test company description", 1996);
 		Mockito.when(restService.editCompany(company)).thenThrow(
 				new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 		controller.editCompanyMethod(actionRequest, actionResponse, model,
@@ -150,13 +154,42 @@ public class CompanyManagementControllerTests {
 
 	@Test
 	public void editCompanyClientError() {
-		Company company = new Company(1, "test company name",
-				"test company description", 1996);
 		Mockito.when(restService.editCompany(company)).thenThrow(
 				new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 		controller.editCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
 		Mockito.verify(result)
 				.reject("company", "Company could not be updated");
+	}
+
+	@Test
+	public void addAddressSuccessfulTest() {
+		controller.addAddressMethod(actionRequest, actionResponse, model,
+				company, address, result);
+		Mockito.verify(model).addAttribute("success",
+				"Address successfully added!");
+	}
+
+	@Test
+	public void editAddressSuccessfulTest() {
+		controller.editAddressMethod(actionRequest, actionResponse, model,
+				company, address, result);
+		Mockito.verify(model).addAttribute("success",
+				"Address successfully updated!");
+	}
+
+	@Test
+	public void deleteAddressSuccessfulTest() {
+		controller.deleteAddressMethod(actionRequest, actionResponse, model,
+				company, result, address.getId());
+		Mockito.verify(model).addAttribute("success",
+				"Address successfully deleted!");
+	}
+
+	@Test
+	public void renderEditAddressTest() {
+		String viewName = controller.renderEditAddressMethod(request, response,
+				model, address.getId(), company, result);
+		assertEquals("editAddress", viewName);
 	}
 }

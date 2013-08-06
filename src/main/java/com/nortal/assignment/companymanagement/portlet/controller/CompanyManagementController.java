@@ -93,7 +93,6 @@ public class CompanyManagementController {
 			company = restService.getCompany(companyId);
 			model.addAttribute("company", company);
 			model.addAttribute("address", new Address());
-			System.out.println("view company: " + company.getId());
 			return "viewCompany";
 		} catch (HttpClientErrorException e) {
 			result.reject("company", "Company could not be found");
@@ -108,9 +107,9 @@ public class CompanyManagementController {
 			ActionResponse response, Model model,
 			@ModelAttribute("company") Company company,
 			@ModelAttribute("address") Address address, BindingResult result) {
-		company.addAddress(address);
 		try {
-			restService.editCompany(company);
+			address.setCompany(company);
+			restService.addAddress(address);
 			model.addAttribute("success", "Address successfully added!");
 		} catch (HttpClientErrorException e) {
 			result.reject("company", "Address could not be added");
@@ -155,7 +154,6 @@ public class CompanyManagementController {
 					"Server error, address could not be updated");
 		}
 		response.setRenderParameter("companyId", "" + company.getId());
-		System.out.println("edit: " + company.getId());
 		response.setRenderParameter("action", "viewCompanyDetails");
 	}
 
@@ -165,7 +163,6 @@ public class CompanyManagementController {
 			@RequestParam("addressId") long addressId,
 			@ModelAttribute("company") Company company, BindingResult result) {
 		model.addAttribute("address", company.getAddress(addressId));
-		System.out.println("render: " + company.getId());
 		return "editAddress";
 
 	}

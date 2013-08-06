@@ -14,6 +14,8 @@ public interface RestConnectorService {
 
 	public Company getCompany(long companyId);
 
+	public Address addAddress(Address address);
+
 	public Address editAddress(Address address);
 
 	public void deleteAddress(long addressId, long companyId);

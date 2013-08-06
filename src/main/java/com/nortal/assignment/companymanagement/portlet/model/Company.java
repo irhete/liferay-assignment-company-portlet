@@ -26,7 +26,7 @@ public class Company implements Serializable {
 	private int year;
 
 	@XmlTransient
-	private Addresses addresses;
+	private Addresses addresses = new Addresses();
 
 	public Company(String name, String description, int year) {
 		this.name = name;
@@ -77,7 +77,6 @@ public class Company implements Serializable {
 	}
 
 	public void setId(long id) {
-		System.out.println(id);
 		this.id = id;
 	}
 
@@ -92,27 +91,6 @@ public class Company implements Serializable {
 
 	public void addAddress(Address address) {
 		addresses.getAddresses().add(address);
-	}
-
-	public void removeAddress(long addressId) {
-		int i = 0;
-		Address address;
-		while ((address = addresses.getAddresses().get(i)).getId() != addressId) {
-			i++;
-		}
-		addresses.getAddresses().remove(address);
-
-	}
-
-	public void editAddress(Address address) {
-		int i = 0;
-		while (addresses.getAddresses().get(i).getId() != address.getId()) {
-			i++;
-		}
-		System.out.println(addresses.getAddresses().get(i).getId() + "\t"
-				+ address.getId());
-		addresses.getAddresses().set(i, address);
-
 	}
 
 	public Address getAddress(long addressId) {

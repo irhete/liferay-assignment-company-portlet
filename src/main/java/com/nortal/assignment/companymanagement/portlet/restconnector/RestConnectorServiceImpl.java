@@ -47,4 +47,10 @@ public class RestConnectorServiceImpl implements RestConnectorService {
 				+ "/addresses/" + addressId);
 	}
 
+	public Address addAddress(Address address) {
+		return restTemplate.postForObject("http://localhost:10800/companies/"
+				+ address.getCompany().getId() + "/addresses", address,
+				Address.class);
+	}
+
 }
