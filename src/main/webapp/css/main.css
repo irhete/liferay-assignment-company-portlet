@@ -1,0 +1,28 @@
+#viewCompaniesTable {
+	font-size: 12px;
+}
+
+#viewCompaniesTable td {
+	min-width: 75px;
+}
+
+#viewCompaniesTable th {
+	font-size: 13px;
+}
+
+.companyFormTable {
+	font-size: 12px;
+}
+
+.companyFormTable td, th {
+	min-width: 100px;
+}
+
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}

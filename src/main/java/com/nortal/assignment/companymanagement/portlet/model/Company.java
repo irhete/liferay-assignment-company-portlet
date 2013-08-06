@@ -1,7 +1,6 @@
 package com.nortal.assignment.companymanagement.portlet.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,7 +26,7 @@ public class Company implements Serializable {
 	private int year;
 
 	@XmlTransient
-	private List<Address> addresses;
+	private Addresses addresses;
 
 	public Company(String name, String description, int year) {
 		this.name = name;
@@ -84,15 +83,44 @@ public class Company implements Serializable {
 
 	@XmlElement
 	public Addresses getAddresses() {
-		return new Addresses(addresses);
+		return addresses;
 	}
 
 	public void setAddresses(Addresses addresses) {
-		this.addresses = addresses.getAddresses();
+		this.addresses = addresses;
 	}
 
 	public void addAddress(Address address) {
-		addresses.add(address);
+		addresses.getAddresses().add(address);
+	}
+
+	public void removeAddress(long addressId) {
+		int i = 0;
+		Address address;
+		while ((address = addresses.getAddresses().get(i)).getId() != addressId) {
+			i++;
+		}
+		addresses.getAddresses().remove(address);
+
+	}
+
+	public void editAddress(Address address) {
+		int i = 0;
+		while (addresses.getAddresses().get(i).getId() != address.getId()) {
+			i++;
+		}
+		System.out.println(addresses.getAddresses().get(i).getId() + "\t"
+				+ address.getId());
+		addresses.getAddresses().set(i, address);
+
+	}
+
+	public Address getAddress(long addressId) {
+		int i = 0;
+		while (addresses.getAddresses().get(i).getId() != addressId) {
+			i++;
+		}
+		return addresses.getAddresses().get(i);
 	}
 
 }

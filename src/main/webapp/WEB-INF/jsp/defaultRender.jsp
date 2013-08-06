@@ -11,6 +11,10 @@
 	<portlet:param name="action" value="addCompany"></portlet:param>
 </portlet:actionURL>
 
+<portlet:renderURL var="viewCompanyDetailsMethodURL">
+	<portlet:param name="action" value="viewCompanyDetails"></portlet:param>
+</portlet:renderURL>
+
 <c:if test="${not empty success}">
 	<p class="success">${success}</p>
 </c:if>
@@ -18,7 +22,7 @@
 <form:errors path="company" cssClass="error" />
 <form:form action="${addCompanyMethodURL}" method="post"
 	commandName="company">
-	<table id="addCompanyTable">
+	<table class="companyFormTable">
 		<tr>
 			<th><spring:message code="name.text" text='Name'/>:</th>
 			<td><input name="name" type="text" /></td>
@@ -48,15 +52,12 @@
 	<tr>
 		<th><spring:message code="id.text" text='ID'/></th>
 		<th><spring:message code="name.text" text='Name'/></th>
-		<th><spring:message code="description.text" text='Description'/></th>
-		<th><spring:message code="foundaion.year.text" text='Foundation year'/></th>
 	</tr>
 	<c:forEach items="${companies}" var="company">
 		<tr>
 			<td>${company.id}</td>
 			<td>${company.name}</td>
-			<td>${company.description}</td>
-			<td>${company.year}</td>
+			<td><a href="${viewCompanyDetailsMethodURL}&companyId=${company.id}"><spring:message code="view.text" text="View"/></a></td>
 		</tr>
 	</c:forEach>
 </table>

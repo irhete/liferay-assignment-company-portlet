@@ -5,6 +5,7 @@
 	<portlet>
 		<portlet-name>company-management-portlet</portlet-name>
 		<instanceable>false</instanceable>
+		<header-portlet-css>/css/main.css</header-portlet-css>
 		<css-class-wrapper>company-management-portlet</css-class-wrapper>
 	</portlet>
 	<role-mapper>
