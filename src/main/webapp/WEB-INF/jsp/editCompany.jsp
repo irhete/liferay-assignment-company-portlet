@@ -11,6 +11,10 @@
 	<portlet:param name="action" value="editCompany"></portlet:param>
 </portlet:actionURL>
 
+<portlet:renderURL var="viewCompanyDetailsMethodURL">
+	<portlet:param name="action" value="viewCompanyDetails"></portlet:param>
+</portlet:renderURL>
+
 <c:if test="${not empty success}">
 	<p class="success">${success}</p>
 </c:if>
@@ -32,7 +36,7 @@
 					cssClass="error" /></td>
 		</tr>
 		<tr>
-			<th><spring:message code="foundation.year.text" text='Foundation year'/>:</th>
+			<th><spring:message code="year.text" text='Foundation year'/>:</th>
 			<td><input name="year" type="text" value="${company.year}"/></td>
 			<td><form:errors path="year"
 					cssClass="error" /></td>
@@ -43,3 +47,5 @@
 		</tr>
 	</table>
 </form:form>
+
+<a href="${viewCompanyDetailsMethodURL}&companyId=${company.id}"><spring:message code="back.text"/></a>

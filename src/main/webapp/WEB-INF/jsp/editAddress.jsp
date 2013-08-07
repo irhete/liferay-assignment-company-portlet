@@ -7,6 +7,10 @@
 	<portlet:param name="action" value="editAddress"></portlet:param>
 </portlet:actionURL>
 
+<portlet:renderURL var="viewCompanyDetailsMethodURL">
+	<portlet:param name="action" value="viewCompanyDetails"></portlet:param>
+</portlet:renderURL>
+
 <form:errors path="address" cssClass="error" />
 <form:form action="${editAddressMethodURL}" method="post"
 	modelAttribute="address">
@@ -36,7 +40,9 @@
 					cssClass="error" /></td>
 		</tr>
 		<tr>
-			<td><input type="submit" value="<spring:message code="edit" text='Edit'/>" /></td>
+			<td><input type="submit" value="<spring:message code="edit.text" text='Edit'/>" /></td>
 		</tr>
 	</table>
 </form:form>
+
+<a href="${viewCompanyDetailsMethodURL}&companyId=${company.id}"><spring:message code="back.text"/></a>

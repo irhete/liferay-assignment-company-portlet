@@ -173,7 +173,7 @@ public class CompanyManagementControllerTests {
 	@Test
 	public void editAddressSuccessfulTest() {
 		controller.editAddressMethod(actionRequest, actionResponse, model,
-				company, address, result);
+				address, result, company);
 		Mockito.verify(model).addAttribute("success",
 				"Address successfully updated!");
 	}
@@ -189,7 +189,7 @@ public class CompanyManagementControllerTests {
 	@Test
 	public void renderEditAddressTest() {
 		String viewName = controller.renderEditAddressMethod(request, response,
-				model, address.getId(), company, result);
+				model, address.getId(), company);
 		assertEquals("editAddress", viewName);
 	}
 }

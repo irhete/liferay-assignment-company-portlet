@@ -18,10 +18,10 @@
 <c:if test="${not empty success}">
 	<p class="success">${success}</p>
 </c:if>
-
 <form:errors path="company" cssClass="error" />
 <form:form action="${addCompanyMethodURL}" method="post"
 	commandName="company">
+	
 	<table class="companyFormTable">
 		<tr>
 			<th><spring:message code="name.text" text='Name'/>:</th>

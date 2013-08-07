@@ -21,6 +21,9 @@
 	<portlet:param name="action" value="deleteAddress"></portlet:param>
 </portlet:actionURL>
 
+<portlet:renderURL var="handleRenderRequestMethodURL">
+</portlet:renderURL>
+
 <c:if test="${not empty success}">
 	<p class="success">${success}</p>
 </c:if>
@@ -46,6 +49,10 @@
 		<th><spring:message code="addresses.text" text='Addresses' />:</th>
 	</tr>
 	<tr>
+		<td><a href="${renderEditCompanyMethodURL}&companyId=${company.id}"><spring:message
+					code="edit.text" text="Edit" /></a></td>
+	</tr>
+	<tr>
 		<th><spring:message code="street.text" text='Street' />:</th>
 		<th><spring:message code="building.text" text='Building' />:</th>
 		<th><spring:message code="city.text" text='City' />:</th>
@@ -63,15 +70,12 @@
 						code="delete.text" text="Delete" /></a></td>
 		</tr>
 	</c:forEach>
-	<tr>
-		<td><a href="${renderEditCompanyMethodURL}&companyId=${company.id}"><spring:message
-					code="edit.text" text="Edit" /></a></td>
-	</tr>
+	
 </table>
 
 <form:errors path="address" cssClass="error" />
 <form:form action="${addAddressMethodURL}" method="post"
-	modelAttribute="address">
+	commandName="address">
 	<table class="addressFormTable">
 		<tr>
 			<th><spring:message code="street.text" text='Street'/></th>
@@ -102,3 +106,5 @@
 		</tr>
 	</table>
 </form:form>
+
+<a href="${handleRenderRequestMethodURL}"><spring:message code="back.text"/></a>

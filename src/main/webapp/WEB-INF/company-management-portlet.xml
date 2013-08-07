@@ -12,7 +12,8 @@
   http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
 
 	<context:component-scan
-		base-package="com.nortal.assignment.companymanagement.portlet" />
+		base-package="com.nortal.assignment.companymanagement.portlet, com.nortal.assignment.messagesource" />
+		
 
 <bean id="jspViewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -22,5 +23,20 @@
 		<property name="suffix" value=".jsp" />
 		<property name="order" value="1" />
 	</bean>
+	
+	
+	<bean id="messageSource" name="messageSource"
+		class="com.nortal.assignment.messagesource.VerticalDatabaseMessageSource">
+	</bean>
+	
+	<!-- Database -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521/XE" />
+		<property name="username" value="system" />
+		<property name="password" value="root" />
+	</bean>
+	
 
 </beans>

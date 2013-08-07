@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.portlet.bind.annotation.ActionMapping;
 import org.springframework.web.portlet.bind.annotation.RenderMapping;
 
@@ -22,6 +23,8 @@ import com.nortal.assignment.companymanagement.portlet.model.Address;
 import com.nortal.assignment.companymanagement.portlet.model.Companies;
 import com.nortal.assignment.companymanagement.portlet.model.Company;
 import com.nortal.assignment.companymanagement.portlet.restconnector.RestConnectorService;
+import com.nortal.assignment.companymanagement.portlet.validator.AddressValidator;
+import com.nortal.assignment.companymanagement.portlet.validator.CompanyValidator;
 
 @SessionAttributes({ "company", "address" })
 @Controller(value = "CompanyManagementController")
@@ -34,13 +37,17 @@ public class CompanyManagementController {
 	@RenderMapping
 	public String handleRenderRequest(RenderRequest request,
 			RenderResponse response, Model model) {
-		model.addAttribute("company", new Company());
+		if (!model.containsAttribute("company")) {
+			model.addAttribute("company", new Company());
+		}
 		Companies companies;
 		try {
 			companies = restService.getCompanies();
 		} catch (HttpClientErrorException e) {
 			companies = new Companies();
 		} catch (HttpServerErrorException e) {
+			companies = new Companies();
+		} catch (ResourceAccessException e) {
 			companies = new Companies();
 		}
 		model.addAttribute("companies", companies.getCompanies());
@@ -51,13 +58,20 @@ public class CompanyManagementController {
 	public void addCompanyMethod(ActionRequest request,
 			ActionResponse response, Model model,
 			@ModelAttribute("company") Company company, BindingResult result) {
-		try {
-			restService.addCompany(company);
-			model.addAttribute("success", "Company successfully added!");
-		} catch (HttpClientErrorException e) {
-			result.reject("company", "Company could not be added");
-		} catch (HttpServerErrorException e) {
-			result.reject("company", "Server error, company could not be added");
+		CompanyValidator validator = new CompanyValidator();
+		validator.validate(company, result);
+		if (!result.hasErrors()) {
+			try {
+				company.setId(0);
+				restService.addCompany(company);
+				model.addAttribute("success", "Company successfully added!");
+			} catch (HttpClientErrorException e) {
+				result.reject("client.error");
+			} catch (HttpServerErrorException e) {
+				result.reject("server.error");
+			} catch (ResourceAccessException e) {
+				result.reject("connection.error");
+			}
 		}
 	}
 
@@ -71,17 +85,23 @@ public class CompanyManagementController {
 	public void editCompanyMethod(ActionRequest request,
 			ActionResponse response, Model model,
 			@ModelAttribute("company") Company company, BindingResult result) {
-		try {
-			restService.editCompany(company);
-			model.addAttribute("success", "Company successfully updated!");
-		} catch (HttpClientErrorException e) {
-			result.reject("company", "Company could not be updated");
-		} catch (HttpServerErrorException e) {
-			result.reject("company",
-					"Server error, company could not be updated");
+		CompanyValidator validator = new CompanyValidator();
+		validator.validate(company, result);
+		response.setRenderParameter("action", "renderEditCompany");
+		if (!result.hasErrors()) {
+			try {
+				restService.editCompany(company);
+				model.addAttribute("success", "Company successfully updated!");
+				response.setRenderParameter("companyId", "" + company.getId());
+				response.setRenderParameter("action", "viewCompanyDetails");
+			} catch (HttpClientErrorException e) {
+				result.reject("client.error");
+			} catch (HttpServerErrorException e) {
+				result.reject("server.error");
+			} catch (ResourceAccessException e) {
+				result.reject("connection.error");
+			}
 		}
-		response.setRenderParameter("companyId", "" + company.getId());
-		response.setRenderParameter("action", "viewCompanyDetails");
 	}
 
 	@RenderMapping(params = "action=viewCompanyDetails")
@@ -92,12 +112,16 @@ public class CompanyManagementController {
 		try {
 			company = restService.getCompany(companyId);
 			model.addAttribute("company", company);
-			model.addAttribute("address", new Address());
+			if (!model.containsAttribute("address")) {
+				model.addAttribute("address", new Address());
+			}
 			return "viewCompany";
 		} catch (HttpClientErrorException e) {
-			result.reject("company", "Company could not be found");
+			result.reject("client.error");
 		} catch (HttpServerErrorException e) {
-			result.reject("company", "Server error, company could not be found");
+			result.reject("server.error");
+		} catch (ResourceAccessException e) {
+			result.reject("connection.error");
 		}
 		return handleRenderRequest(request, response, model);
 	}
@@ -107,14 +131,22 @@ public class CompanyManagementController {
 			ActionResponse response, Model model,
 			@ModelAttribute("company") Company company,
 			@ModelAttribute("address") Address address, BindingResult result) {
-		try {
-			address.setCompany(company);
-			restService.addAddress(address);
-			model.addAttribute("success", "Address successfully added!");
-		} catch (HttpClientErrorException e) {
-			result.reject("company", "Address could not be added");
-		} catch (HttpServerErrorException e) {
-			result.reject("company", "Server error, address could not be added");
+		AddressValidator validator = new AddressValidator();
+		validator.validate(address, result);
+		if (!result.hasErrors()) {
+			try {
+				address.setId(0);
+				address.setCompany(company);
+				restService.addAddress(address);
+				model.addAttribute("success", "Address successfully added!");
+				model.addAttribute("address", new Address());
+			} catch (HttpClientErrorException e) {
+				result.reject("client.error");
+			} catch (HttpServerErrorException e) {
+				result.reject("server.error");
+			} catch (ResourceAccessException e) {
+				result.reject("connection.error");
+			}
 		}
 		response.setRenderParameter("companyId", "" + company.getId());
 		response.setRenderParameter("action", "viewCompanyDetails");
@@ -129,10 +161,11 @@ public class CompanyManagementController {
 			restService.deleteAddress(addressId, company.getId());
 			model.addAttribute("success", "Address successfully deleted!");
 		} catch (HttpClientErrorException e) {
-			result.reject("company", "Address could not be deleted");
+			result.reject("client.error");
 		} catch (HttpServerErrorException e) {
-			result.reject("company",
-					"Server error, address could not be deleted");
+			result.reject("server.error");
+		} catch (ResourceAccessException e) {
+			result.reject("connection.error");
 		}
 		response.setRenderParameter("companyId", "" + company.getId());
 		response.setRenderParameter("action", "viewCompanyDetails");
@@ -141,28 +174,42 @@ public class CompanyManagementController {
 	@ActionMapping(params = "action=editAddress")
 	public void editAddressMethod(ActionRequest request,
 			ActionResponse response, Model model,
-			@ModelAttribute("company") Company company,
-			@ModelAttribute("address") Address address, BindingResult result) {
-		try {
-			address.setCompany(company);
-			restService.editAddress(address);
-			model.addAttribute("success", "Address successfully updated!");
-		} catch (HttpClientErrorException e) {
-			result.reject("company", "Address could not be updated");
-		} catch (HttpServerErrorException e) {
-			result.reject("company",
-					"Server error, address could not be updated");
+			@ModelAttribute("address") Address address, BindingResult result,
+			@ModelAttribute("company") Company company) {
+		AddressValidator validator = new AddressValidator();
+		validator.validate(address, result);
+		response.setRenderParameter("addressId", "" + address.getId());
+		response.setRenderParameter("action", "renderEditAddressErrors");
+		if (!result.hasErrors()) {
+			try {
+				address.setCompany(company);
+				restService.editAddress(address);
+				model.addAttribute("success", "Address successfully updated!");
+				response.setRenderParameter("companyId", "" + company.getId());
+				response.setRenderParameter("action", "viewCompanyDetails");
+			} catch (HttpClientErrorException e) {
+				result.reject("client.error");
+			} catch (HttpServerErrorException e) {
+				result.reject("server.error");
+			} catch (ResourceAccessException e) {
+				result.reject("connection.error");
+			}
 		}
-		response.setRenderParameter("companyId", "" + company.getId());
-		response.setRenderParameter("action", "viewCompanyDetails");
 	}
 
 	@RenderMapping(params = "action=renderEditAddress")
 	public String renderEditAddressMethod(RenderRequest request,
 			RenderResponse response, Model model,
 			@RequestParam("addressId") long addressId,
-			@ModelAttribute("company") Company company, BindingResult result) {
+			@ModelAttribute("company") Company company) {
 		model.addAttribute("address", company.getAddress(addressId));
+		return "editAddress";
+
+	}
+
+	@RenderMapping(params = "action=renderEditAddressErrors")
+	public String renderEditAddressErrorsMethod(RenderRequest request,
+			RenderResponse response, Model model) {
 		return "editAddress";
 
 	}
