@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 import com.nortal.assignment.companymanagement.portlet.controller.CompanyManagementController;
 import com.nortal.assignment.companymanagement.portlet.model.Address;
@@ -91,8 +92,7 @@ public class CompanyManagementControllerTests {
 		Mockito.when(restService.getCompanies()).thenReturn(new Companies());
 		String viewName = controller.viewCompanyDetailsMethod(request,
 				response, model, 1, new Company(), result);
-		Mockito.verify(result).reject("company",
-				"Server error, company could not be found");
+		Mockito.verify(result).reject("server.error");
 		assertEquals("defaultRender", viewName);
 	}
 
@@ -103,7 +103,18 @@ public class CompanyManagementControllerTests {
 		Mockito.when(restService.getCompanies()).thenReturn(new Companies());
 		String viewName = controller.viewCompanyDetailsMethod(request,
 				response, model, 1, new Company(), result);
-		Mockito.verify(result).reject("company", "Company could not be found");
+		Mockito.verify(result).reject("client.error");
+		assertEquals("defaultRender", viewName);
+	}
+
+	@Test
+	public void viewCompanyDetailsConnectionErrorTest() {
+		Mockito.when(restService.getCompany(1)).thenThrow(
+				new ResourceAccessException("connection refused"));
+		Mockito.when(restService.getCompanies()).thenReturn(new Companies());
+		String viewName = controller.viewCompanyDetailsMethod(request,
+				response, model, 1, new Company(), result);
+		Mockito.verify(result).reject("connection.error");
 		assertEquals("defaultRender", viewName);
 	}
 
@@ -121,8 +132,7 @@ public class CompanyManagementControllerTests {
 				new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 		controller.addCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
-		Mockito.verify(result).reject("company",
-				"Server error, company could not be added");
+		Mockito.verify(result).reject("server.error");
 	}
 
 	@Test
@@ -131,7 +141,7 @@ public class CompanyManagementControllerTests {
 				new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 		controller.addCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
-		Mockito.verify(result).reject("company", "Company could not be added");
+		Mockito.verify(result).reject("client.error");
 	}
 
 	@Test
@@ -148,8 +158,7 @@ public class CompanyManagementControllerTests {
 				new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
 		controller.editCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
-		Mockito.verify(result).reject("company",
-				"Server error, company could not be updated");
+		Mockito.verify(result).reject("server.error");
 	}
 
 	@Test
@@ -158,8 +167,7 @@ public class CompanyManagementControllerTests {
 				new HttpClientErrorException(HttpStatus.BAD_REQUEST));
 		controller.editCompanyMethod(actionRequest, actionResponse, model,
 				company, result);
-		Mockito.verify(result)
-				.reject("company", "Company could not be updated");
+		Mockito.verify(result).reject("client.error");
 	}
 
 	@Test
