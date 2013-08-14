@@ -46,11 +46,12 @@
 		<td>${company.year}</td>
 	</tr>
 	<tr>
-		<th><spring:message code="addresses.text" text='Addresses' />:</th>
+		<td><a
+			href="${renderEditCompanyMethodURL}&companyId=${company.id}"><spring:message
+					code="edit.text" text="Edit" /></a></td>
 	</tr>
 	<tr>
-		<td><a href="${renderEditCompanyMethodURL}&companyId=${company.id}"><spring:message
-					code="edit.text" text="Edit" /></a></td>
+		<th><spring:message code="addresses.text" text='Addresses' />:</th>
 	</tr>
 	<tr>
 		<th><spring:message code="street.text" text='Street' />:</th>
@@ -64,13 +65,14 @@
 			<td>${address.building}</td>
 			<td>${address.city}</td>
 			<td>${address.country}</td>
-			<td><a href="${renderEditAddressMethodURL}&addressId=${address.id}"><spring:message
+			<td><a
+				href="${renderEditAddressMethodURL}&addressId=${address.id}"><spring:message
 						code="edit.text" text="Edit" /></a></td>
 			<td><a href="${deleteAddressMethodURL}&addressId=${address.id}"><spring:message
 						code="delete.text" text="Delete" /></a></td>
 		</tr>
 	</c:forEach>
-	
+
 </table>
 
 <form:errors path="address" cssClass="error" />
@@ -78,33 +80,31 @@
 	commandName="address">
 	<table class="addressFormTable">
 		<tr>
-			<th><spring:message code="street.text" text='Street'/></th>
-			<td><input name="street" type="text"/></td>
-			<td><form:errors path="street"
-					cssClass="error" /></td>
+			<th><spring:message code="street.text" text='Street' /></th>
+			<td><input name="street" type="text" /></td>
+			<td><form:errors path="street" cssClass="error" /></td>
 		</tr>
 		<tr>
-			<th><spring:message code="building.text" text='Building'/></th>
-			<td><input name="building" type="text"/></td>
-			<td><form:errors path="building"
-					cssClass="error" /></td>
+			<th><spring:message code="building.text" text='Building' /></th>
+			<td><input name="building" type="text" /></td>
+			<td><form:errors path="building" cssClass="error" /></td>
 		</tr>
 		<tr>
-			<th><spring:message code="city.text" text='City'/></th>
-			<td><input name="city" type="text"/></td>
-			<td><form:errors path="city"
-					cssClass="error" /></td>
+			<th><spring:message code="city.text" text='City' /></th>
+			<td><input name="city" type="text" /></td>
+			<td><form:errors path="city" cssClass="error" /></td>
 		</tr>
 		<tr>
-			<th><spring:message code="country.text" text='Country'/></th>
-			<td><input name="country" type="text"/></td>
-			<td><form:errors path="country"
-					cssClass="error" /></td>
+			<th><spring:message code="country.text" text='Country' /></th>
+			<td><input name="country" type="text" /></td>
+			<td><form:errors path="country" cssClass="error" /></td>
 		</tr>
 		<tr>
-			<td><input type="submit" value="<spring:message code="add.text" text='Add'/>" /></td>
+			<td><input type="submit"
+				value="<spring:message code="add.text" text='Add'/>" /></td>
 		</tr>
 	</table>
 </form:form>
 
-<a href="${handleRenderRequestMethodURL}"><spring:message code="back.text"/></a>
+<a href="${handleRenderRequestMethodURL}"><spring:message
+		code="back.text" /></a>

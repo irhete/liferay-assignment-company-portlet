@@ -19,5 +19,13 @@ public class CompanyValidator implements Validator {
 				"Description can not be empty");
 		ValidationUtils.rejectIfEmpty(e, "year", "empty",
 				"Year can not be empty");
+		ValidationUtils.rejectIfEmpty(e, "addresses.addresses[0].street",
+				"empty", "Street can not be empty");
+		ValidationUtils.rejectIfEmpty(e, "addresses.addresses[0].building",
+				"empty", "Building can not be empty");
+		ValidationUtils.rejectIfEmpty(e, "addresses.addresses[0].city",
+				"empty", "City can not be empty");
+		ValidationUtils.rejectIfEmpty(e, "addresses.addresses[0].country",
+				"empty", "Country can not be empty");
 	}
 }
